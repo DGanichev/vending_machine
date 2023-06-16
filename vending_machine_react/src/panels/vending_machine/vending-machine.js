@@ -1,11 +1,10 @@
 import React, {useEffect, useReducer} from "react";
 import {Button, ButtonGroup, Label, Loader} from "../../components";
 import {ActionType, initialState, reducer} from "./reducer/reducer"
-import VendingMachineDisplay from "../../components/vending_machine_display/vending-machine-display";
-import VendingMachineProduct from "../../components/vending_machine_product/vending-machine-product";
-import Separator from "../../components/common/separator/separator";
-import coins from "./constants/coins";
+import VendingMachineDisplay from "./components/vending_machine_display/vending-machine-display";
+import VendingMachineProduct from "./components/vending_machine_product/vending-machine-product";
 import Select from "react-select";
+import coins from "./constants/coins";
 
 import "./vending-machine.css";
 
@@ -43,7 +42,6 @@ const VendingMachine = () => {
     }, [product]);
 
     const handleInsertCoins = (value) => {
-        console.log(value, balance);
         const total = (balance + value).toFixed(1);
         const message = `Current balance: ${total}€`;
         dispatch({type: ActionType.INSERT_COINS, total: +total, message: message});
@@ -87,7 +85,7 @@ const VendingMachine = () => {
         <VendingMachineProduct key={product.id} quantity={product.quantity} price={product.price} name={product.name}
                                imageSrc={product.imageSrc}/>));
 
-    const productOptions = products.map(product => ({
+    const productsSelectOptions = products.map(product => ({
         label: product.name,
         value: product
     }))
@@ -97,33 +95,29 @@ const VendingMachine = () => {
     return <div className="container">
         <Label label={"Vending Machine"} className={"title"}/>
         <div className={"inner-container"}>
-            <div className={"column full-height"}>
-                <div className={"row space-between"}>
-                    <div className={"products"}>
-                        {loading ? <Loader/> : items}
-                    </div>
-                    <Separator type={"vertical"}/>
-                    <div className={"interface"}>
-                        <VendingMachineDisplay message={message}/>
-                        <ButtonGroup items={coins} onClick={handleInsertCoins} className={"coins-input"}/>
-                        <Button onClick={handleCoinsReturn} disabled={isReturnCoinsButtonDisabled}
-                                label={"Return coins"} className={"return-coins-button"}/>
-                        <Select
-                            className={"product-select"}
-                            placeholder={"Please, select product..."}
-                            isLoading={loading}
-                            isClearable
-                            isSearchable
-                            options={productOptions}
-                            value={null}
-                            onChange={handleProductSelect}
-                        />
-                    </div>
+            <div className={"column left"}>
+                <div className={"products-grid"}>
+                    {loading ? <Loader/> : items}
                 </div>
-                <Separator/>
-                <div className={"row"}>
+                <div className={"product-receive"}>
                     {!!product && <VendingMachineProduct name={product.name} imageSrc={product.imageSrc}/>}
                 </div>
+            </div>
+            <div className={"column right"}>
+                <VendingMachineDisplay message={message}/>
+                <ButtonGroup items={coins} onClick={handleInsertCoins} className={"coins-input"}/>
+                <Button onClick={handleCoinsReturn} disabled={isReturnCoinsButtonDisabled}
+                        label={"Return coins"} className={"return-coins-button"}/>
+                <Select
+                    className={"product-select"}
+                    placeholder={"Please, select product..."}
+                    isLoading={loading}
+                    isClearable
+                    isSearchable
+                    options={productsSelectOptions}
+                    value={null}
+                    onChange={handleProductSelect}
+                />
             </div>
         </div>
     </div>;
