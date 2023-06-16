@@ -6,7 +6,7 @@
 
 ## Installation
 
-For buidling the server part a Node.js version 16.16.0 has been used
+For building the server part a Node.js version 16.16.0 has been used
 
 Install the dependencies and devDependencies and start the server.
 
