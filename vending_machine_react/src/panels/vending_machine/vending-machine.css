@@ -1,0 +1,76 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    max-width: 100%;
+    min-width: 600px;
+    height: 100%;
+}
+
+.container .inner-container {
+    width: 1000px;
+    min-width: 600px;
+    height: 100%;
+    border: 1px solid gray;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px;
+}
+
+.container .title {
+    font-size: 40px;
+}
+
+.container .coins-input {
+    padding: 0 8px;
+}
+
+.container .interface {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.container .insert-coins-label {
+    padding: 0 8px;
+}
+
+.container .return-coins-button {
+    background-color: #555555;
+    color: #ffffff;
+}
+
+.container .products {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 650px;
+}
+
+.container .product-select {
+    margin-top: 16px;
+    width: 100%;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.space-between {
+    justify-content: space-between;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.column {
+    display: flex;
+    gap: 16px;
+    flex-direction: column;
+}
