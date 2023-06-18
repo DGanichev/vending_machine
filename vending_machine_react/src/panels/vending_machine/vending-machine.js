@@ -10,7 +10,7 @@ import "./vending-machine.css";
 
 const VendingMachine = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const {message, insertedCoins, products, loading, product} = state;
+    const {message, insertedCoins, products, processing, loading, product} = state;
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -95,7 +95,7 @@ const VendingMachine = () => {
         value: product
     }))
 
-    const isReturnCoinsButtonDisabled = insertedCoins === 0;
+    const isReturnCoinsButtonDisabled = insertedCoins === 0 || processing;
 
     return <div className="container">
         <Label label={"Vending Machine"} className={"title"}/>
@@ -110,13 +110,14 @@ const VendingMachine = () => {
             </div>
             <div className={"column right"}>
                 <VendingMachineDisplay message={message}/>
-                <ButtonGroup items={coins} onClick={handleInsertCoins} className={"coins-input"}/>
+                <ButtonGroup items={coins} onClick={handleInsertCoins} disabled={processing} className={"coins-input"}/>
                 <Button onClick={handleReturnCoins} disabled={isReturnCoinsButtonDisabled}
                         label={"Return coins"} className={"return-coins-button"}/>
                 <Select
                     className={"product-select"}
                     placeholder={"Please, select product..."}
                     isLoading={loading}
+                    isDisabled={processing}
                     isClearable
                     isSearchable
                     options={productsSelectOptions}

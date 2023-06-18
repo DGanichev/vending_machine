@@ -14,6 +14,7 @@ export const initialState = {
     change: 0,
     message: "Please, insert coins...",
     products: [],
+    processing: false,
     loading: false,
     product: null,
 };
@@ -33,7 +34,8 @@ export const reducer = (state, action) => {
                 change: payload.change,
                 product: payload.product,
                 products: payload.products,
-                message: `Thank you! Your change is: ${payload.change}€`
+                message: `Thank you! Your change is: ${payload.change}€`,
+                processing: true,
             }
         case ActionType.UPDATE_MESSAGE:
             return {...state, message: payload.message}
@@ -45,7 +47,8 @@ export const reducer = (state, action) => {
                 product: null,
                 message: initialState.message,
                 insertedCoins: initialState.insertedCoins,
-                change: initialState.change
+                change: initialState.change,
+                processing: initialState.processing,
             }
         case ActionType.CLEAR_STATE:
             return initialState
