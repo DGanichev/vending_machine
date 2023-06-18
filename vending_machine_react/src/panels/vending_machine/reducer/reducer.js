@@ -1,4 +1,3 @@
-
 export const ActionType = Object.freeze({
     INSERT_COINS: "INSERT_COINS",
     RETURN_COINS: "RETURN_COINS",
@@ -12,8 +11,7 @@ export const ActionType = Object.freeze({
 
 export const initialState = {
     insertedCoins: 0,
-    balance: 0,
-    coinReturn: 0,
+    change: 0,
     message: "Please, insert coins...",
     products: [],
     loading: false,
@@ -21,21 +19,34 @@ export const initialState = {
 };
 
 export const reducer = (state, action) => {
-    switch (action.type) {
+    const {type, payload} = action;
+    switch (type) {
         case ActionType.INSERT_COINS:
-            return {...state, insertedCoins: action.total, balance: action.total, message: action.message }
+            return {...state, insertedCoins: payload.coins, change: payload.coins, message: payload.message}
         case ActionType.RETURN_COINS:
-            return {...state, coinReturn: action.coinReturn, insertedCoins: 0, balance: 0, message: action.message}
+            return {...state, insertedCoins: 0, change: payload.change, message: payload.message}
         case ActionType.SET_PRODUCTS:
-            return {...state, products: action.products, loading: false}
+            return {...state, products: payload.products, loading: false}
         case ActionType.BUY_PRODUCT:
-            return {...state, balance: action.balance, product: action.product, products: action.products, message: `Current balance: ${action.balance}€`}
+            return {
+                ...state,
+                change: payload.change,
+                product: payload.product,
+                products: payload.products,
+                message: `Thank you! Your change is: ${payload.change}€`
+            }
         case ActionType.UPDATE_MESSAGE:
-            return {...state, message: action.message}
+            return {...state, message: payload.message}
         case ActionType.LOADING:
             return {...state, loading: true}
         case ActionType.TAKE_PRODUCT:
-            return {...state, product: null}
+            return {
+                ...state,
+                product: null,
+                message: initialState.message,
+                insertedCoins: initialState.insertedCoins,
+                change: initialState.change
+            }
         case ActionType.CLEAR_STATE:
             return initialState
         default:

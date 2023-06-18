@@ -10,7 +10,7 @@ import "./vending-machine.css";
 
 const VendingMachine = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
-    const {message, insertedCoins, products, balance, loading, product} = state;
+    const {message, insertedCoins, products, loading, product} = state;
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -22,7 +22,7 @@ const VendingMachine = () => {
                     signal: abortController.signal,
                 });
                 const data = await response.json();
-                dispatch({type: ActionType.SET_PRODUCTS, products: data});
+                dispatch({type: ActionType.SET_PRODUCTS, payload: {products: data}});
             } catch (error) {
                 console.error(`An error has occurred: ${error.message}`)
             }
@@ -37,29 +37,30 @@ const VendingMachine = () => {
         if (!!product) {
             setTimeout(() => {
                 dispatch({type: ActionType.TAKE_PRODUCT});
-            }, 2000);
+            }, 2500);
         }
     }, [product]);
 
     const handleInsertCoins = (value) => {
-        const total = (balance + value).toFixed(1);
-        const message = `Current balance: ${total}€`;
-        dispatch({type: ActionType.INSERT_COINS, total: +total, message: message});
+        const roundedCoinsString = (insertedCoins + value).toFixed(1);
+        const message = `Current balance: ${roundedCoinsString}€`;
+        dispatch({type: ActionType.INSERT_COINS, payload: {coins: +roundedCoinsString, message: message}});
     }
 
-    const handleCoinsReturn = () => {
+    const handleReturnCoins = () => {
         const message = `Please, insert coins...`;
-        dispatch({type: ActionType.RETURN_COINS, coinReturn: insertedCoins, message: message});
+        dispatch({type: ActionType.RETURN_COINS, payload: {change: insertedCoins, message: message}});
     }
 
     const handleProductSelect = (selection) => {
         const {value} = selection;
         if (value.quantity === 0) {
+            const message = `Product is out of stock. Please select another or take your coins - ${insertedCoins}€...`;
             dispatch({
                 type: ActionType.UPDATE_MESSAGE,
-                message: `Product is out of stock. Please select another or take your coins - ${balance}€...`
+                payload: {message: message}
             });
-        } else if (balance >= value.price) {
+        } else if (insertedCoins >= value.price) {
             const updatedProducts = products.map(product => {
                 const {id, quantity} = product;
                 if (id === value.id) {
@@ -71,12 +72,16 @@ const VendingMachine = () => {
                     return product;
                 }
             });
-            const newBalance = (balance - value.price).toFixed(1);
-            dispatch({type: ActionType.BUY_PRODUCT, balance: +newBalance, product: value, products: updatedProducts});
+            const changeString = (insertedCoins - value.price).toFixed(1);
+            dispatch({
+                type: ActionType.BUY_PRODUCT,
+                payload: {change: +changeString, product: value, products: updatedProducts}
+            });
         } else {
+            const message = `Not enough balance - ${insertedCoins}€. Please, insert coins...`;
             dispatch({
                 type: ActionType.UPDATE_MESSAGE,
-                message: `Not enough balance - ${balance}€. Please, insert coins...`
+                payload: {message: message},
             });
         }
     }
@@ -106,7 +111,7 @@ const VendingMachine = () => {
             <div className={"column right"}>
                 <VendingMachineDisplay message={message}/>
                 <ButtonGroup items={coins} onClick={handleInsertCoins} className={"coins-input"}/>
-                <Button onClick={handleCoinsReturn} disabled={isReturnCoinsButtonDisabled}
+                <Button onClick={handleReturnCoins} disabled={isReturnCoinsButtonDisabled}
                         label={"Return coins"} className={"return-coins-button"}/>
                 <Select
                     className={"product-select"}
